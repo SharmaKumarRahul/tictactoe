@@ -3,19 +3,20 @@ import Board from './components/Board';
 import { calculateWinner } from './helpers';
 import History from './components/History';
 import StatusMessage from './components/StatusMessage';
+
 import './styles/root.scss';
 
+const NEW_GAME = [{ board: Array(9).fill(null), isXNext: true }];
+
 const App = () => {
-  const [history, setHistory] = useState([
-    { board: Array(9).fill(null), isXNext: true },
-  ]);
+  const [history, setHistory] = useState(NEW_GAME);
   // eslint-disable-next-line no-unused-vars
   const [currentMove, setCurrentMove] = useState(0);
 
   const current = history[currentMove];
 
   // eslint-disable-next-line no-unused-vars
-  const winner = calculateWinner(current.board);
+  const { winner, winningSquares } = calculateWinner(current.board);
 
   const handelSquareClick = position => {
     if (current.board[position]) {
@@ -41,11 +42,22 @@ const App = () => {
     setCurrentMove(move);
   };
 
+  const onNewGame = () => {
+    setHistory(NEW_GAME);
+    setCurrentMove(0);
+  };
   return (
     <div className="app">
       <h1>TIC TAC TOE</h1>
       <StatusMessage winner={winner} current={current} />
-      <Board board={current.board} handelSquareClick={handelSquareClick} />
+      <Board
+        board={current.board}
+        handelSquareClick={handelSquareClick}
+        winningSquares={winningSquares}
+      />
+      <button type="button" onClick={onNewGame}>
+        Start New Game
+      </button>
       <History history={history} moveTo={moveTo} currentMove={currentMove} />
     </div>
   );
